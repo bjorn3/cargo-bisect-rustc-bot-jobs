@@ -1,0 +1,34 @@
+
+name: Bisect
+
+on:
+  - push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # https://github.com/actions/cache/issues/133
+    - name: Fixup owner of ~/.cargo/
+      # Don't remove the trailing /. It is necessary to follow the symlink.
+      run: sudo chown -R $(whoami):$(id -ng) ~/.cargo/
+
+    - name: Cache cargo installed crates
+      uses: actions/cache@v1.1.2
+      with:
+        path: ~/.cargo/bin
+        key: cargo-installed-crates
+
+    - run: cargo install cargo-bisect-rustc || true
+
+    - name: Bisect
+      run: cargo bisect-rustc "--start=2020-04-24" "--end=2020-04-28" | grep -v "for x86_64-unknown-linux-gnu" | tee log.txt
+
+    - name: Upload log
+      run: curl -T log.txt -X POST $WEBHOOK/?upload_log=1
+      env:
+        WEBHOOK: ${{ secrets.WEBHOOK }}
+        
