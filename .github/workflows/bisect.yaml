@@ -25,5 +25,5 @@ jobs:
     - run: cargo install --git https://github.com/spastorino/cargo-bisect-rustc.git --branch properly-report-scanned-date --force
 
     - name: Bisect
-      run: cargo bisect-rustc "--end=2020-04-25" --access=github | grep -v "for x86_64-unknown-linux-gnu" || true
+      run: RUST_BACKTRACE=1 cargo bisect-rustc "--end=2020-04-25" --access=github | grep -v "for x86_64-unknown-linux-gnu" || true
         
