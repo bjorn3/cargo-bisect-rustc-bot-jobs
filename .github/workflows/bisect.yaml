@@ -22,8 +22,8 @@ jobs:
         path: ~/.cargo/bin
         key: cargo-installed-crates
 
-    - run: cargo install cargo-bisect-rustc || true
+    - run: cargo install --git https://github.com/spastorino/cargo-bisect-rustc.git --branch properly-report-scanned-date --force
 
     - name: Bisect
-      run: cargo bisect-rustc "--start=2020-04-26" "--end=2020-04-28" --access=github | grep -v "for x86_64-unknown-linux-gnu" || true
+      run: cargo bisect-rustc "--end=2020-04-25" --access=github | grep -v "for x86_64-unknown-linux-gnu" || true
         
