@@ -1,0 +1,24 @@
+
+name: Bisect
+
+on:
+  - push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Cache cargo installed crates
+      uses: actions/cache@v1.1.2
+      with:
+        path: ~/.cargo/bin
+        key: cargo-installed-crates-2
+
+    - run: cargo install cargo-bisect-rustc || true
+
+    - name: Bisect
+      run: cargo bisect-rustc "--start=2020-11-01" "--end=2020-12-25" --access=github | grep -v "for x86_64-unknown-linux-gnu" || true
+        
